@@ -1,8 +1,21 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
+// For Vercel serverless functions
+export const config = {
+  runtime: 'edge',
+};
+
 const app = express();
 app.use(bodyParser.json());
+
+// Allow CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
 // Simple validation for frame messages
 const validateFrameMessage = async (frameMessage) => {
@@ -84,11 +97,8 @@ app.post('/action', async (req, res) => {
         });
     }
     
-    // Try to get the host from the request headers
-    const host = req.headers.host || "your-vercel-domain.vercel.app";
-    const protocol = req.headers['x-forwarded-proto'] || 'https';
-    
-    const baseUrl = `${protocol}://${host}`;
+    // Use the fixed Vercel domain
+    const baseUrl = "https://bisou-trader.vercel.app";
     const redirectUrl = `${baseUrl}?frameAction=${frameAction}`;
     
     // The metadata for the next frame
