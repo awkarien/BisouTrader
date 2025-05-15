@@ -3,11 +3,6 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "outputDirectory": "dist",
-  "rewrites": [
-    { "source": "/api/frames/action", "destination": "/api" },
-    { "source": "/api/frames/verify", "destination": "/api" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
   "headers": [
     {
       "source": "/(.*)",

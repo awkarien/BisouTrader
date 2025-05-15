@@ -1,4 +1,4 @@
-// Simplified API handler for Vercel
+// Super simple API handler for Vercel
 export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -10,123 +10,48 @@ export default function handler(req, res) {
     res.status(200).end();
     return;
   }
-  
-  // Determine which endpoint was called
-  const path = req.url.split('/').pop();
-  
-  if (path === 'verify' && req.method === 'POST') {
-    // Handle frame verification
-    return verifyFrameHandler(req, res);
-  } else if (path === 'action' && req.method === 'POST') {
-    // Handle frame actions
-    return frameActionHandler(req, res);
-  } else {
-    // Default response for unmatched routes
-    res.status(404).json({ error: 'Not found' });
-  }
-}
 
-// Simple validation for frame messages
-function validateFrameMessage(frameMessage) {
-  if (!frameMessage) {
-    return { valid: false, message: "No frame message provided" };
+  // Simple ping/test response
+  if (req.method === 'GET') {
+    return res.status(200).json({ status: 'ok', message: 'Frame API is running' });
   }
   
-  // Very basic validation - in a real app, you'd verify these with farcaster SDK
-  if (frameMessage.messageHash && 
-      frameMessage.signature &&
-      frameMessage.timestamp) {
-    return { valid: true };
-  }
-  
-  return { valid: false, message: "Invalid frame message format" };
-}
-
-// Handler for frame verification
-function verifyFrameHandler(req, res) {
-  try {
-    const frameMessage = req.body;
-    const validationResult = validateFrameMessage(frameMessage);
-    
-    if (!validationResult.valid) {
-      return res.status(400).json({ 
-        valid: false, 
-        message: validationResult.message 
+  // For POST requests (frame actions)
+  if (req.method === 'POST') {
+    try {
+      const buttonIndex = req.body?.buttonIndex || 1;
+      
+      // Map button index to action
+      let frameAction = "buy50";
+      switch (buttonIndex) {
+        case 1: frameAction = "buy50"; break;
+        case 2: frameAction = "buy250"; break;
+        case 3: frameAction = "buy500"; break;
+        case 4: frameAction = "custom"; break;
+      }
+      
+      // Create the response with next frame info
+      const baseUrl = "https://bisou-trader-1gih-4owgwr9rq-awkariens-projects.vercel.app";
+      
+      return res.status(200).json({
+        success: true,
+        nextFrameMetadata: {
+          image: "https://ipfs.io/ipfs/bafkreighrlz43fgcdmqdtyv755zmsqsn5iey5stxvicgxfygfn6mxoy474",
+          buttons: [
+            { label: "Continue to Purchase", action: "post" }
+          ],
+          postUrl: baseUrl
+        }
       });
-    }
-    
-    return res.status(200).json({ valid: true });
-  } catch (error) {
-    console.error("Error validating frame message:", error);
-    return res.status(500).json({ 
-      valid: false, 
-      message: "Error validating frame message" 
-    });
-  }
-}
-
-// Handler for frame actions
-function frameActionHandler(req, res) {
-  try {
-    const { buttonIndex, frameMessage } = req.body;
-    const validationResult = validateFrameMessage(frameMessage);
-    
-    if (!validationResult.valid) {
-      return res.status(400).json({ 
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ 
         success: false, 
-        message: validationResult.message,
-        nextFrameMetadata: null 
+        message: "Internal server error" 
       });
     }
-    
-    // Generate the appropriate next frame based on which button was clicked
-    let frameAction = "";
-    
-    switch (buttonIndex) {
-      case 1: // Buy 50 $BISOU
-        frameAction = "buy50";
-        break;
-      case 2: // Buy 250 $BISOU
-        frameAction = "buy250";
-        break;
-      case 3: // Buy 500 $BISOU
-        frameAction = "buy500";
-        break;
-      case 4: // Custom amount
-        frameAction = "custom";
-        break;
-      default:
-        return res.status(400).json({ 
-          success: false, 
-          message: "Invalid button index",
-          nextFrameMetadata: null 
-        });
-    }
-    
-    // Use the fixed domain for Vercel deployment
-    const baseUrl = "https://bisou-trader.vercel.app";
-    const redirectUrl = `${baseUrl}?frameAction=${frameAction}`;
-    
-    // The metadata for the next frame
-    const nextFrameMetadata = {
-      image: "https://ipfs.io/ipfs/bafkreighrlz43fgcdmqdtyv755zmsqsn5iey5stxvicgxfygfn6mxoy474",
-      buttons: [
-        { label: "Continue to Purchase", action: "post" }
-      ],
-      postUrl: redirectUrl
-    };
-    
-    return res.status(200).json({
-      success: true,
-      nextFrameMetadata,
-      redirectUrl
-    });
-  } catch (error) {
-    console.error("Error handling frame action:", error);
-    return res.status(500).json({ 
-      success: false, 
-      message: "Error handling frame action",
-      nextFrameMetadata: null 
-    });
   }
+  
+  // Default response for unmatched methods
+  res.status(405).json({ error: 'Method not allowed' });
 }
