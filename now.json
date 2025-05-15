@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/api/frames/action", "dest": "/api/frames/action.js" },
+    { "src": "/api/frames/verify", "dest": "/api/frames/verify.js" },
+    { "src": "/api", "dest": "/api/index.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

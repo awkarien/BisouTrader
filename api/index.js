@@ -1,25 +1,45 @@
-// Super simple API handler for Vercel
-export default function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+// Pure Edge Runtime compatible handler
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function handler(request) {
+  // Parse request
+  const { method, url } = request;
   
-  // Handle OPTIONS requests for CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+  // Set base headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
+  
+  // Handle OPTIONS (CORS preflight)
+  if (method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers });
   }
 
-  // Simple ping/test response
-  if (req.method === 'GET') {
-    return res.status(200).json({ status: 'ok', message: 'Frame API is running' });
+  // GET request - simple ping
+  if (method === 'GET') {
+    return new Response(
+      JSON.stringify({ status: 'ok', message: 'Frame API is running' }),
+      { status: 200, headers }
+    );
   }
   
-  // For POST requests (frame actions)
-  if (req.method === 'POST') {
+  // POST request (Frame actions)
+  if (method === 'POST') {
     try {
-      const buttonIndex = req.body?.buttonIndex || 1;
+      // Parse the request body as JSON
+      let body = {};
+      try {
+        body = await request.json();
+      } catch (e) {
+        body = {};
+      }
+      
+      const buttonIndex = body?.buttonIndex || 1;
       
       // Map button index to action
       let frameAction = "buy50";
@@ -30,10 +50,10 @@ export default function handler(req, res) {
         case 4: frameAction = "custom"; break;
       }
       
-      // Create the response with next frame info
+      // Build the next frame response
       const baseUrl = "https://bisou-trader-1gih-4owgwr9rq-awkariens-projects.vercel.app";
       
-      return res.status(200).json({
+      const responseBody = {
         success: true,
         nextFrameMetadata: {
           image: "https://ipfs.io/ipfs/bafkreighrlz43fgcdmqdtyv755zmsqsn5iey5stxvicgxfygfn6mxoy474",
@@ -42,16 +62,26 @@ export default function handler(req, res) {
           ],
           postUrl: baseUrl
         }
-      });
+      };
+      
+      return new Response(
+        JSON.stringify(responseBody),
+        { status: 200, headers }
+      );
     } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({ 
-        success: false, 
-        message: "Internal server error" 
-      });
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          message: "Internal server error" 
+        }),
+        { status: 500, headers }
+      );
     }
   }
   
   // Default response for unmatched methods
-  res.status(405).json({ error: 'Method not allowed' });
+  return new Response(
+    JSON.stringify({ error: 'Method not allowed' }),
+    { status: 405, headers }
+  );
 }

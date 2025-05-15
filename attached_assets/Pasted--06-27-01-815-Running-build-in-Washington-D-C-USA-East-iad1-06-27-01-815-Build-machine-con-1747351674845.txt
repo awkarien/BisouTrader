@@ -1,0 +1,58 @@
+[06:27:01.815] Running build in Washington, D.C., USA (East) – iad1
+[06:27:01.815] Build machine configuration: 2 cores, 8 GB
+[06:27:01.833] Cloning github.com/awkarien/BisouTrader (Branch: main, Commit: dc19beb)
+[06:27:02.047] Previous build caches not available
+[06:27:02.135] Cloning completed: 302.000ms
+[06:27:02.489] Running "vercel build"
+[06:27:02.887] Vercel CLI 41.7.3
+[06:27:04.078] Installing dependencies...
+[06:27:08.621] npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[06:27:08.651] npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[06:27:13.845] 
+[06:27:13.845] added 493 packages in 10s
+[06:27:13.845] 
+[06:27:13.846] 68 packages are looking for funding
+[06:27:13.846]   run `npm fund` for details
+[06:27:14.011] 
+[06:27:14.012] > rest-express@1.0.0 build
+[06:27:14.012] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[06:27:14.012] 
+[06:27:14.261] [36mvite v5.4.14 [32mbuilding for production...[36m[39m
+[06:27:14.314] transforming...
+[06:27:14.604] Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+[06:27:14.604]   npx update-browserslist-db@latest
+[06:27:14.605]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[06:27:19.021] [32m✓[39m 1820 modules transformed.
+[06:27:19.421] rendering chunks...
+[06:27:19.431] computing gzip size...
+[06:27:19.451] [2m../dist/public/[22m[32mindex.html                 [39m[1m[2m  1.97 kB[22m[1m[22m[2m │ gzip:   0.72 kB[22m
+[06:27:19.452] [2m../dist/public/[22m[2massets/[22m[35mindex-tiY9HMmz.css  [39m[1m[2m 59.73 kB[22m[1m[22m[2m │ gzip:  10.62 kB[22m
+[06:27:19.452] [2m../dist/public/[22m[2massets/[22m[36mindex-2DvzVoaJ.js   [39m[1m[33m538.39 kB[39m[22m[2m │ gzip: 186.69 kB[22m
+[06:27:19.453] [33m
+[06:27:19.453] (!) Some chunks are larger than 500 kB after minification. Consider:
+[06:27:19.453] - Using dynamic import() to code-split the application
+[06:27:19.453] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[06:27:19.454] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[06:27:19.454] [32m✓ built in 5.17s[39m
+[06:27:19.490] 
+[06:27:19.490]   dist/index.js  9.2kb
+[06:27:19.490] 
+[06:27:19.490] ⚡ Done in 6ms
+[06:27:20.417] Build Completed in /vercel/output [16s]
+[06:27:20.482] Deploying outputs...
+[06:27:22.691] Error: The Edge Function "api/frames" is referencing unsupported modules:
+[06:27:22.691] 	- body-parser: zlib, querystring
+[06:27:22.692] 	- content-disposition: path
+[06:27:22.692] 	- cookie-signature: crypto
+[06:27:22.692] 	- destroy: fs, stream, zlib
+[06:27:22.692] 	- etag: crypto, fs
+[06:27:22.692] 	- express: http, path, net, querystring, fs
+[06:27:22.693] 	- iconv-lite: string_decoder, stream
+[06:27:22.693] 	- methods: http
+[06:27:22.693] 	- mime-types: path
+[06:27:22.693] 	- mime: path, fs
+[06:27:22.693] 	- parseurl: url
+[06:27:22.693] 	- send: fs, path, stream
+[06:27:22.694] 	- serve-static: path, url
+[06:27:22.998] 
+[06:27:25.762] Exiting build container
