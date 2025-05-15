@@ -4,6 +4,7 @@ import TokenInfo from "./token-info";
 import PurchaseOptions from "./purchase-options";
 import WalletConnection from "./wallet-connection";
 import TransactionStatus from "./transaction-status";
+import WarpcastShare from "./warpcast-share";
 import { ExternalLink } from "./icons";
 
 interface BisouCardProps {
@@ -94,6 +95,15 @@ const BisouCard = ({ isFrameView = false }: BisouCardProps) => {
             hash={transaction.hash}
           />
         )}
+
+        {/* Share on Warpcast */}
+        <div className="w-full mt-6">
+          <WarpcastShare 
+            text="Just discovered $BISOU token on Base Network! 💸 Check it out:" 
+            url="https://bisou-trader-1gih-4owgwr9rq-awkariens-projects.vercel.app" 
+            className="w-full"
+          />
+        </div>
 
         {/* Footer */}
         <footer className="mt-8 pt-4 border-t border-gray-800 text-center text-xs text-muted-foreground w-full">
